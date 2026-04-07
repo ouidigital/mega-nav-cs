@@ -103,3 +103,22 @@ This widget binds internal styling safely via namespaced CSS properties. Overrid
 - `--mn-transition`
 - `--mn-icon-stroke`
 - `--mn-border-radius`
+
+---
+
+## 🗃️ Iconography Library
+The included hidden SVG sprite contains over 40 heavily optimized icons tailored for small business, agency, and layout layouts. Use them by passing their ID into a `<use>` tag:
+
+`<use href="#icon-[name]"></use>`
+
+### Interface & Layout
+`menu`, `close`, `arrow-down`, `arrow-right`, `external-link`, `check`, `search`, `layout`, `gear`, `download`, `upload`, `shield`
+
+### Contact & Support
+`envelope`, `phone`, `message`, `map-pin`, `help`, `lifebuoy`, `user`, `users`
+
+### Media & Data
+`image`, `camera`, `file-text`, `bar-chart`, `clipboard`, `tag`, `star`, `calendar`, `clock`
+
+### Industries & Tools
+`briefcase` (Corporate), `building` (Real Estate), `wrench`, `paint-roller`, `bolt` (Trades), `droplet`, `snowflake`, `flame` (HVAC), `house`, `leaf` (Landscaping), `cross` (Health), `scissors` (Salons), `coffee` (Cafes)
