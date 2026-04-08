@@ -4,6 +4,29 @@
         "url": "/"
     },
     {
+        "key": "Solutions",
+        "panelClass": "cs-grid-2",
+        "activePrefix": "/solutions/",
+        "categories": [
+            {
+                "title": "Small Business",
+                "links": [
+                    { "key": "Starter Plan", "url": "/solutions/starter/", "icon": "briefcase" },
+                    { "key": "Growth Plan",  "url": "/solutions/growth/",  "icon": "tag" },
+                    { "key": "Pro Plan",     "url": "/solutions/pro/",     "icon": "star" }
+                ]
+            },
+            {
+                "title": "Enterprise",
+                "links": [
+                    { "key": "Security & SSO", "url": "/solutions/security/",   "icon": "shield" },
+                    { "key": "Multi-Site",     "url": "/solutions/multi-site/", "icon": "building" },
+                    { "key": "Compliance",     "url": "/solutions/compliance/", "icon": "clipboard" }
+                ]
+            }
+        ]
+    },
+    {
         "key": "Services",
         "panelClass": "cs-grid-3",
         "activePrefix": "/services/",
@@ -11,17 +34,17 @@
             {
                 "title": "Professional",
                 "links": [
-                    { "key": "Website Design", "url": "/services/web/", "icon": "layout" },
-                    { "key": "SEO Audits", "url": "/services/seo/", "icon": "search" },
+                    { "key": "Website Design",     "url": "/services/web/",       "icon": "layout" },
+                    { "key": "SEO Audits",         "url": "/services/seo/",       "icon": "search" },
                     { "key": "Marketing Strategy", "url": "/services/marketing/", "icon": "bar-chart" }
                 ]
             },
             {
                 "title": "Trades",
                 "links": [
-                    { "key": "Plumbing", "url": "/services/plumbing/", "icon": "wrench" },
+                    { "key": "Plumbing",   "url": "/services/plumbing/",   "icon": "wrench" },
                     { "key": "Electrical", "url": "/services/electrical/", "icon": "bolt" },
-                    { "key": "Painting", "url": "/services/painting/", "icon": "paint-roller" }
+                    { "key": "Painting",   "url": "/services/painting/",   "icon": "paint-roller" }
                 ]
             }
         ],
@@ -34,24 +57,59 @@
         }
     },
     {
+        "key": "Resources",
+        "panelClass": "cs-grid-4",
+        "activePrefix": "/resources/",
+        "categories": [
+            {
+                "title": "Learn",
+                "links": [
+                    { "key": "Documentation",  "url": "/resources/docs/",      "icon": "file-text" },
+                    { "key": "Tutorials",      "url": "/resources/tutorials/", "icon": "help" },
+                    { "key": "Support Center", "url": "/resources/support/",   "icon": "lifebuoy" }
+                ]
+            },
+            {
+                "title": "Media",
+                "links": [
+                    { "key": "Case Studies", "url": "/resources/case-studies/", "icon": "image" },
+                    { "key": "Webinars",     "url": "/resources/webinars/",     "icon": "camera" },
+                    { "key": "Events",       "url": "/resources/events/",       "icon": "calendar" }
+                ]
+            },
+            {
+                "title": "Tools",
+                "links": [
+                    { "key": "Downloads",     "url": "/resources/downloads/",    "icon": "download" },
+                    { "key": "Integrations",  "url": "/resources/integrations/", "icon": "upload" },
+                    { "key": "API Reference", "url": "/resources/api/",          "icon": "gear" }
+                ]
+            },
+            {
+                "title": "Community",
+                "links": [
+                    { "key": "Forum",      "url": "/resources/forum/",      "icon": "message" },
+                    { "key": "Partners",   "url": "/resources/partners/",   "icon": "users" },
+                    { "key": "Newsletter", "url": "/resources/newsletter/", "icon": "envelope" }
+                ]
+            }
+        ]
+    },
+    {
         "key": "Company",
         "children": [
-            { "key": "About Us", "url": "/about/", "icon": "building" },
-            { "key": "Our Team", "url": "/team/", "icon": "users" },
-            { "key": "Careers", "url": "/careers/", "icon": "briefcase" }
+            { "key": "About Us", "url": "/about/",   "icon": "building" },
+            { "key": "Our Team", "url": "/team/",    "icon": "users" },
+            { "key": "Careers",  "url": "/careers/", "icon": "briefcase" }
         ]
     },
     {
         "key": "Contact",
         "align": "right",
         "children": [
-            { "key": "Message Us", "url": "/contact/", "icon": "message" },
-            { "key": "Call Support", "url": "tel:+1234567890", "icon": "phone" },
-            { "key": "Find a Location", "url": "/locations/", "icon": "map-pin" }
+            { "key": "Message Us",      "url": "/contact/",       "icon": "message" },
+            { "key": "Call Support",    "url": "tel:+1234567890", "icon": "phone" },
+            { "key": "Find a Location", "url": "/locations/",     "icon": "map-pin" }
         ]
-    },
-    {
-        "key": "Blog",
-        "url": "/blog/"
     }
 ]

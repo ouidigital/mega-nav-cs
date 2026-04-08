@@ -864,46 +864,60 @@
     <---    Mega-menu panel         -->
     <--- -------------------------- -*/
 
-    /* Items flagged .cs-mega promote the panel to a full-container drop */
+    /* Items flagged .cs-mega anchor the panel to themselves so it can center
+       under the parent button rather than the whole container. */
     #cs-navigation .cs-li.cs-mega {
-        position: static;
+        position: relative;
     }
 
+    /* Panel sizes itself to its content and centers under its parent item.
+       The `translate` property is used instead of `transform` so it doesn't
+       collide with the scaleY open/close animation on .cs-drop-panel. */
     #cs-navigation .cs-mega>.cs-drop-panel {
         min-width: 0;
-        left: 1rem;
-        right: 1rem;
-        width: auto;
-        max-width: none;
+        left: 50%;
+        right: auto;
+        translate: -50% 0;
+        width: max-content;
+        max-width: calc(100vw - 2rem);
         padding: 0;
+    }
+
+    /* Edge-aligned variant: pin to the right edge of the parent item. */
+    #cs-navigation .cs-mega>.cs-drop-panel.cs-drop-right {
+        left: auto;
+        right: 0;
+        translate: 0 0;
     }
 
     #cs-navigation .cs-mega>.cs-drop-panel>.cs-drop-inner {
         padding: 2rem 2rem 2.25rem;
     }
 
-    /* Multi-column grid */
+    /* Multi-column grid. Columns have a fixed target width so every panel —
+       regardless of column count — shares the same column density. The panel
+       itself grows or shrinks to fit the grid. */
     #cs-navigation .cs-mega-grid {
         display: grid;
         gap: 1.5rem 2.5rem;
-        grid-template-columns: repeat(2, minmax(12rem, 1fr));
+        grid-template-columns: repeat(3, minmax(13rem, 15rem));
     }
 
     #cs-navigation .cs-drop-panel.cs-grid-2 .cs-mega-grid {
-        grid-template-columns: repeat(2, minmax(12rem, 1fr));
+        grid-template-columns: repeat(2, minmax(13rem, 15rem));
     }
 
     #cs-navigation .cs-drop-panel.cs-grid-3 .cs-mega-grid {
-        grid-template-columns: repeat(3, minmax(12rem, 1fr));
+        grid-template-columns: repeat(3, minmax(13rem, 15rem));
     }
 
     #cs-navigation .cs-drop-panel.cs-grid-4 .cs-mega-grid {
-        grid-template-columns: repeat(4, minmax(11rem, 1fr));
+        grid-template-columns: repeat(4, minmax(13rem, 15rem));
     }
 
     /* Opt-in arbitrary column count via --cs-cols inline style */
     #cs-navigation .cs-drop-panel[style*="--cs-cols"] .cs-mega-grid {
-        grid-template-columns: repeat(var(--cs-cols), minmax(11rem, 1fr));
+        grid-template-columns: repeat(var(--cs-cols), minmax(13rem, 15rem));
     }
 
     #cs-navigation .cs-mega-category {

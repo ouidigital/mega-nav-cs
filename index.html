@@ -169,7 +169,45 @@
                         <a href="#" class="cs-li-link cs-active" aria-current="page">Home</a>
                     </li>
 
-                    <!-- Mega-menu item: 3 columns + featured promo -->
+                    <!-- 2-column mega-menu: two side-by-side categories -->
+                    <li class="cs-li cs-dropdown cs-mega">
+                        <button class="cs-li-link cs-dropdown-button"
+                                type="button"
+                                aria-haspopup="true"
+                                aria-expanded="false"
+                                aria-controls="cs-panel-solutions">
+                            Solutions
+                            <svg class="cs-drop-icon" aria-hidden="true"><use href="#icon-arrow-down"></use></svg>
+                        </button>
+
+                        <div class="cs-drop-panel cs-grid-2" id="cs-panel-solutions">
+                            <div class="cs-drop-inner">
+                                <div class="cs-mega-grid">
+
+                                    <div class="cs-mega-category">
+                                        <h3 class="cs-mega-category-title">Small Business</h3>
+                                        <ul class="cs-drop-ul">
+                                            <li class="cs-drop-li"><a href="#" class="cs-li-link cs-drop-link"><svg class="cs-icon" aria-hidden="true"><use href="#icon-briefcase"></use></svg> Starter Plan</a></li>
+                                            <li class="cs-drop-li"><a href="#" class="cs-li-link cs-drop-link"><svg class="cs-icon" aria-hidden="true"><use href="#icon-tag"></use></svg> Growth Plan</a></li>
+                                            <li class="cs-drop-li"><a href="#" class="cs-li-link cs-drop-link"><svg class="cs-icon" aria-hidden="true"><use href="#icon-star"></use></svg> Pro Plan</a></li>
+                                        </ul>
+                                    </div>
+
+                                    <div class="cs-mega-category">
+                                        <h3 class="cs-mega-category-title">Enterprise</h3>
+                                        <ul class="cs-drop-ul">
+                                            <li class="cs-drop-li"><a href="#" class="cs-li-link cs-drop-link"><svg class="cs-icon" aria-hidden="true"><use href="#icon-shield"></use></svg> Security &amp; SSO</a></li>
+                                            <li class="cs-drop-li"><a href="#" class="cs-li-link cs-drop-link"><svg class="cs-icon" aria-hidden="true"><use href="#icon-building"></use></svg> Multi-Site</a></li>
+                                            <li class="cs-drop-li"><a href="#" class="cs-li-link cs-drop-link"><svg class="cs-icon" aria-hidden="true"><use href="#icon-clipboard"></use></svg> Compliance</a></li>
+                                        </ul>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+
+                    <!-- 3-column mega-menu: two categories + featured promo -->
                     <li class="cs-li cs-dropdown cs-mega">
                         <button class="cs-li-link cs-dropdown-button"
                                 type="button"
@@ -217,7 +255,63 @@
                         </div>
                     </li>
 
-                    <!-- Standard dropdown (not mega) -->
+                    <!-- 4-column mega-menu: four categories, no promo -->
+                    <li class="cs-li cs-dropdown cs-mega">
+                        <button class="cs-li-link cs-dropdown-button"
+                                type="button"
+                                aria-haspopup="true"
+                                aria-expanded="false"
+                                aria-controls="cs-panel-resources">
+                            Resources
+                            <svg class="cs-drop-icon" aria-hidden="true"><use href="#icon-arrow-down"></use></svg>
+                        </button>
+
+                        <div class="cs-drop-panel cs-grid-4" id="cs-panel-resources">
+                            <div class="cs-drop-inner">
+                                <div class="cs-mega-grid">
+
+                                    <div class="cs-mega-category">
+                                        <h3 class="cs-mega-category-title">Learn</h3>
+                                        <ul class="cs-drop-ul">
+                                            <li class="cs-drop-li"><a href="#" class="cs-li-link cs-drop-link"><svg class="cs-icon" aria-hidden="true"><use href="#icon-file-text"></use></svg> Documentation</a></li>
+                                            <li class="cs-drop-li"><a href="#" class="cs-li-link cs-drop-link"><svg class="cs-icon" aria-hidden="true"><use href="#icon-help"></use></svg> Tutorials</a></li>
+                                            <li class="cs-drop-li"><a href="#" class="cs-li-link cs-drop-link"><svg class="cs-icon" aria-hidden="true"><use href="#icon-lifebuoy"></use></svg> Support Center</a></li>
+                                        </ul>
+                                    </div>
+
+                                    <div class="cs-mega-category">
+                                        <h3 class="cs-mega-category-title">Media</h3>
+                                        <ul class="cs-drop-ul">
+                                            <li class="cs-drop-li"><a href="#" class="cs-li-link cs-drop-link"><svg class="cs-icon" aria-hidden="true"><use href="#icon-image"></use></svg> Case Studies</a></li>
+                                            <li class="cs-drop-li"><a href="#" class="cs-li-link cs-drop-link"><svg class="cs-icon" aria-hidden="true"><use href="#icon-camera"></use></svg> Webinars</a></li>
+                                            <li class="cs-drop-li"><a href="#" class="cs-li-link cs-drop-link"><svg class="cs-icon" aria-hidden="true"><use href="#icon-calendar"></use></svg> Events</a></li>
+                                        </ul>
+                                    </div>
+
+                                    <div class="cs-mega-category">
+                                        <h3 class="cs-mega-category-title">Tools</h3>
+                                        <ul class="cs-drop-ul">
+                                            <li class="cs-drop-li"><a href="#" class="cs-li-link cs-drop-link"><svg class="cs-icon" aria-hidden="true"><use href="#icon-download"></use></svg> Downloads</a></li>
+                                            <li class="cs-drop-li"><a href="#" class="cs-li-link cs-drop-link"><svg class="cs-icon" aria-hidden="true"><use href="#icon-upload"></use></svg> Integrations</a></li>
+                                            <li class="cs-drop-li"><a href="#" class="cs-li-link cs-drop-link"><svg class="cs-icon" aria-hidden="true"><use href="#icon-gear"></use></svg> API Reference</a></li>
+                                        </ul>
+                                    </div>
+
+                                    <div class="cs-mega-category">
+                                        <h3 class="cs-mega-category-title">Community</h3>
+                                        <ul class="cs-drop-ul">
+                                            <li class="cs-drop-li"><a href="#" class="cs-li-link cs-drop-link"><svg class="cs-icon" aria-hidden="true"><use href="#icon-message"></use></svg> Forum</a></li>
+                                            <li class="cs-drop-li"><a href="#" class="cs-li-link cs-drop-link"><svg class="cs-icon" aria-hidden="true"><use href="#icon-users"></use></svg> Partners</a></li>
+                                            <li class="cs-drop-li"><a href="#" class="cs-li-link cs-drop-link"><svg class="cs-icon" aria-hidden="true"><use href="#icon-envelope"></use></svg> Newsletter</a></li>
+                                        </ul>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+
+                    <!-- 1-column standard dropdown (non-mega) — this IS the 1-column layout -->
                     <li class="cs-li cs-dropdown">
                         <button class="cs-li-link cs-dropdown-button"
                                 type="button"
@@ -238,7 +332,7 @@
                         </div>
                     </li>
 
-                    <!-- Edge-aligned dropdown (right-anchored) -->
+                    <!-- Edge-aligned 1-column dropdown (right-anchored) -->
                     <li class="cs-li cs-dropdown">
                         <button class="cs-li-link cs-dropdown-button"
                                 type="button"
@@ -257,10 +351,6 @@
                                 </ul>
                             </div>
                         </div>
-                    </li>
-
-                    <li class="cs-li">
-                        <a href="#" class="cs-li-link">Blog</a>
                     </li>
 
                 </ul>
@@ -288,13 +378,22 @@
         robust disclosure controller with stack-unwinding <kbd>Esc</kbd>.
     </p>
     <p>
-        The top navigation shows four modes: a simple item, a 3-column mega
-        panel with featured promo, a standard dropdown, and an edge-aligned
-        dropdown. Hover or tab into any of them.
+        The top navigation showcases <strong>all four column layouts</strong>
+        side-by-side:
     </p>
+    <ul>
+        <li><strong>Home</strong> — a simple link (no disclosure).</li>
+        <li><strong>Solutions</strong> — a <strong>2-column</strong> mega panel with two categories.</li>
+        <li><strong>Services</strong> — a <strong>3-column</strong> mega panel with two categories and a featured promo / CTA block.</li>
+        <li><strong>Resources</strong> — a <strong>4-column</strong> mega panel with four categories.</li>
+        <li><strong>Company</strong> — a standard dropdown, which is the <strong>1-column</strong> layout (no <code>.cs-mega</code> needed).</li>
+        <li><strong>Contact</strong> — an edge-aligned right-anchored dropdown (<code>.cs-drop-right</code>).</li>
+    </ul>
+    <p>Click any parent item to open its panel.</p>
+
     <h2>Try it</h2>
     <ul>
-        <li>Resize to &lt;1024px → CS-native drop-from-top drawer with backdrop.</li>
+        <li>Resize to &lt;1024px → CS-native drop-from-top drawer with backdrop. All grids collapse to a single column.</li>
         <li>Press <kbd>Esc</kbd> inside a panel to close the deepest level first.</li>
         <li>Run <code>document.body.classList.add('dark-mode')</code> in devtools.</li>
         <li>Disable JS — the <code>:focus-within</code> fallback still opens panels.</li>

@@ -27,7 +27,7 @@ Built with vanilla JS (~2KB), semantic HTML, and CSS Grid. Zero dependencies.
 | `mega-menu.scss` | SCSS source, nested under `#cs-navigation`. |
 | `mega-menu.less` | LESS source, identical rules to the SCSS version. |
 | `mega-menu.js` | ~2KB IIFE, no dependencies. |
-| `index.html` | Full demo: top bar, standard dropdown, 3-column mega panel, edge-aligned dropdown, CTA, SVG sprite, iconography showcase. |
+| `index.html` | Full demo showcasing **all four grid layouts** side-by-side: 1-col standard dropdown, 2-col mega, 3-col mega + promo, 4-col mega, plus a right-edge-aligned dropdown, CTA, SVG sprite, and iconography showcase. |
 | `Astro/StaticHeader.astro` | Drop-in Astro component with hardcoded nav markup. Uses `Astro.url.pathname` for active-state. |
 | `Astro/DynamicHeader.astro` | Data-driven Astro variant that reads from `navData.json`. Iterates the tree and renders mega / dropdown / simple items automatically. |
 | `Astro/navData.json` | Nav tree consumed by `DynamicHeader.astro`. Supports simple links, standard dropdowns, mega panels with categories + promo blocks, and right-aligned dropdowns. |
@@ -103,11 +103,36 @@ import DynamicHeader from "@components/Navigation/DynamicHeader.astro";
 [
   { "key": "Home", "url": "/" },
 
-  // Mega-menu item: 2+ columns + optional featured promo
+  // 2-column mega-menu — two side-by-side categories
+  {
+    "key": "Solutions",
+    "panelClass": "cs-grid-2",             // cs-grid-2 | cs-grid-3 | cs-grid-4
+    "activePrefix": "/solutions/",         // sets cs-active when pathname starts with this
+    "categories": [
+      {
+        "title": "Small Business",
+        "links": [
+          { "key": "Starter Plan", "url": "/solutions/starter/", "icon": "briefcase" },
+          { "key": "Growth Plan",  "url": "/solutions/growth/",  "icon": "tag" },
+          { "key": "Pro Plan",     "url": "/solutions/pro/",     "icon": "star" }
+        ]
+      },
+      {
+        "title": "Enterprise",
+        "links": [
+          { "key": "Security & SSO", "url": "/solutions/security/",   "icon": "shield" },
+          { "key": "Multi-Site",     "url": "/solutions/multi-site/", "icon": "building" },
+          { "key": "Compliance",     "url": "/solutions/compliance/", "icon": "clipboard" }
+        ]
+      }
+    ]
+  },
+
+  // 3-column mega-menu — two categories + featured promo
   {
     "key": "Services",
-    "panelClass": "cs-grid-3",             // cs-grid-2 | cs-grid-3 | cs-grid-4
-    "activePrefix": "/services/",          // sets cs-active when pathname starts with this
+    "panelClass": "cs-grid-3",
+    "activePrefix": "/services/",
     "categories": [
       {
         "title": "Professional",
@@ -115,6 +140,14 @@ import DynamicHeader from "@components/Navigation/DynamicHeader.astro";
           { "key": "Website Design", "url": "/services/web/",       "icon": "layout" },
           { "key": "SEO Audits",     "url": "/services/seo/",       "icon": "search" },
           { "key": "Marketing",      "url": "/services/marketing/", "icon": "bar-chart" }
+        ]
+      },
+      {
+        "title": "Trades",
+        "links": [
+          { "key": "Plumbing",   "url": "/services/plumbing/",   "icon": "wrench" },
+          { "key": "Electrical", "url": "/services/electrical/", "icon": "bolt" },
+          { "key": "Painting",   "url": "/services/painting/",   "icon": "paint-roller" }
         ]
       }
     ],
@@ -127,7 +160,20 @@ import DynamicHeader from "@components/Navigation/DynamicHeader.astro";
     }
   },
 
-  // Standard dropdown
+  // 4-column mega-menu — four categories, no promo
+  {
+    "key": "Resources",
+    "panelClass": "cs-grid-4",
+    "activePrefix": "/resources/",
+    "categories": [
+      { "title": "Learn",     "links": [ /* … */ ] },
+      { "title": "Media",     "links": [ /* … */ ] },
+      { "title": "Tools",     "links": [ /* … */ ] },
+      { "title": "Community", "links": [ /* … */ ] }
+    ]
+  },
+
+  // 1-column standard dropdown (non-mega)
   {
     "key": "Company",
     "children": [
@@ -137,20 +183,20 @@ import DynamicHeader from "@components/Navigation/DynamicHeader.astro";
     ]
   },
 
-  // Edge-aligned dropdown (anchors to the right edge of the parent)
+  // Edge-aligned 1-column dropdown (anchors to the right edge of the parent)
   {
     "key": "Contact",
     "align": "right",
     "children": [
-      { "key": "Message Us",      "url": "/contact/",      "icon": "message" },
+      { "key": "Message Us",      "url": "/contact/",       "icon": "message" },
       { "key": "Call Support",    "url": "tel:+1234567890", "icon": "phone" },
-      { "key": "Find a Location", "url": "/locations/",    "icon": "map-pin" }
+      { "key": "Find a Location", "url": "/locations/",     "icon": "map-pin" }
     ]
-  },
-
-  { "key": "Blog", "url": "/blog/" }
+  }
 ]
 ```
+
+> See `Astro/navData.json` for the full, non-abbreviated version (including the four Resources categories).
 
 Active state resolves in this order:
 1. `activePrefix` → matches `pathname.startsWith(prefix)` (ideal for mega sections like `/services/…`).
@@ -238,7 +284,53 @@ The component used to use BEM `mega-nav__*` classes; it's been fully renamed to 
 
 ## Building grids
 
-Mega panels opt into a column count via `.cs-grid-2`, `.cs-grid-3`, or `.cs-grid-4` on `.cs-mega-grid`:
+The demo nav in `index.html` showcases **all four column layouts** side-by-side: a 1-column standard dropdown (Company), a 2-column mega (Solutions), a 3-column mega with a featured promo (Services), and a 4-column mega (Resources).
+
+Mega panels opt into a column count with `.cs-grid-2`, `.cs-grid-3`, or `.cs-grid-4` — **on the `.cs-drop-panel` itself**, not on the inner grid. (The `.cs-mega-grid` is the grid container; the `cs-grid-*` modifier on the panel is what drives `grid-template-columns`.)
+
+```html
+<!-- Pattern: panel class selects column count -->
+<div class="cs-drop-panel cs-grid-3" id="cs-panel-services">
+  <div class="cs-drop-inner">
+    <div class="cs-mega-grid">
+      <!-- cs-mega-category / cs-mega-promo cells here -->
+    </div>
+  </div>
+</div>
+```
+
+### 1 column — standard (non-mega) dropdown
+
+The **1-column layout is just a standard dropdown** — no `.cs-mega`, no `.cs-mega-grid`, no `cs-grid-*`. `.cs-drop-ul` goes directly inside `.cs-drop-inner`:
+
+```html
+<li class="cs-li cs-dropdown">
+  <button class="cs-li-link cs-dropdown-button"
+          type="button"
+          aria-haspopup="true"
+          aria-expanded="false"
+          aria-controls="cs-panel-company">
+    Company
+    <svg class="cs-drop-icon" aria-hidden="true"><use href="#icon-arrow-down"></use></svg>
+  </button>
+
+  <div class="cs-drop-panel" id="cs-panel-company">
+    <div class="cs-drop-inner">
+      <ul class="cs-drop-ul">
+        <li class="cs-drop-li"><a href="/about/"   class="cs-li-link cs-drop-link"><svg class="cs-icon" aria-hidden="true"><use href="#icon-building"></use></svg> About Us</a></li>
+        <li class="cs-drop-li"><a href="/team/"    class="cs-li-link cs-drop-link"><svg class="cs-icon" aria-hidden="true"><use href="#icon-users"></use></svg> Our Team</a></li>
+        <li class="cs-drop-li"><a href="/careers/" class="cs-li-link cs-drop-link"><svg class="cs-icon" aria-hidden="true"><use href="#icon-briefcase"></use></svg> Careers</a></li>
+      </ul>
+    </div>
+  </div>
+</li>
+```
+
+Add `.cs-drop-right` to the `.cs-drop-panel` for right-edge items so the panel anchors to the right of the parent instead of the left.
+
+### 2 columns — mega panel with two categories
+
+Add `.cs-mega` to the `<li>` and `cs-grid-2` to the `.cs-drop-panel`. Inside `.cs-mega-grid`, drop in two `.cs-mega-category` blocks:
 
 ```html
 <li class="cs-li cs-dropdown cs-mega">
@@ -246,30 +338,31 @@ Mega panels opt into a column count via `.cs-grid-2`, `.cs-grid-3`, or `.cs-grid
           type="button"
           aria-haspopup="true"
           aria-expanded="false"
-          aria-controls="panel-services">
-    Services
+          aria-controls="cs-panel-solutions">
+    Solutions
     <svg class="cs-drop-icon" aria-hidden="true"><use href="#icon-arrow-down"></use></svg>
   </button>
 
-  <div class="cs-drop-panel" id="panel-services">
+  <div class="cs-drop-panel cs-grid-2" id="cs-panel-solutions">
     <div class="cs-drop-inner">
-      <div class="cs-mega-grid cs-grid-3">
+      <div class="cs-mega-grid">
 
         <div class="cs-mega-category">
-          <h3 class="cs-mega-category-title">Residential</h3>
+          <h3 class="cs-mega-category-title">Small Business</h3>
           <ul class="cs-drop-ul">
-            <li class="cs-drop-li"><a href="#" class="cs-li-link cs-drop-link">Plumbing</a></li>
-            <li class="cs-drop-li"><a href="#" class="cs-li-link cs-drop-link">Electrical</a></li>
+            <li class="cs-drop-li"><a href="/solutions/starter/" class="cs-li-link cs-drop-link">Starter Plan</a></li>
+            <li class="cs-drop-li"><a href="/solutions/growth/"  class="cs-li-link cs-drop-link">Growth Plan</a></li>
+            <li class="cs-drop-li"><a href="/solutions/pro/"     class="cs-li-link cs-drop-link">Pro Plan</a></li>
           </ul>
         </div>
 
-        <div class="cs-mega-promo">
-          <h4 class="cs-mega-promo-title">Need a quote?</h4>
-          <p class="cs-mega-promo-text">Free on-site assessment.</p>
-          <a href="/contact" class="cs-mega-promo-btn">
-            Estimate
-            <svg class="cs-icon" aria-hidden="true"><use href="#icon-arrow-right"></use></svg>
-          </a>
+        <div class="cs-mega-category">
+          <h3 class="cs-mega-category-title">Enterprise</h3>
+          <ul class="cs-drop-ul">
+            <li class="cs-drop-li"><a href="/solutions/security/"   class="cs-li-link cs-drop-link">Security &amp; SSO</a></li>
+            <li class="cs-drop-li"><a href="/solutions/multi-site/" class="cs-li-link cs-drop-link">Multi-Site</a></li>
+            <li class="cs-drop-li"><a href="/solutions/compliance/" class="cs-li-link cs-drop-link">Compliance</a></li>
+          </ul>
         </div>
 
       </div>
@@ -278,7 +371,84 @@ Mega panels opt into a column count via `.cs-grid-2`, `.cs-grid-3`, or `.cs-grid
 </li>
 ```
 
-A standard (non-mega) dropdown is the same shape minus `.cs-mega` and `.cs-mega-grid`: put `.cs-drop-ul` directly inside `.cs-drop-inner`. Add `.cs-drop-right` to `.cs-drop-panel` for right-edge items so the panel anchors to the right of the parent.
+### 3 columns — two categories + a featured promo
+
+Same as 2-column but with `cs-grid-3` and a third cell that's a `.cs-mega-promo` instead of a category. The promo block can live anywhere in the grid; by convention it goes in the last column:
+
+```html
+<div class="cs-drop-panel cs-grid-3" id="cs-panel-services">
+  <div class="cs-drop-inner">
+    <div class="cs-mega-grid">
+
+      <div class="cs-mega-category">
+        <h3 class="cs-mega-category-title">Professional</h3>
+        <ul class="cs-drop-ul">…</ul>
+      </div>
+
+      <div class="cs-mega-category">
+        <h3 class="cs-mega-category-title">Trades</h3>
+        <ul class="cs-drop-ul">…</ul>
+      </div>
+
+      <!-- Featured promo block fills the third column -->
+      <div class="cs-mega-promo">
+        <h4 class="cs-mega-promo-title">Need a quote?</h4>
+        <p class="cs-mega-promo-text">Get an expert assessment for your project, entirely for free.</p>
+        <a href="/contact/" class="cs-mega-promo-btn">
+          Get Estimate
+          <svg class="cs-icon" aria-hidden="true"><use href="#icon-arrow-right"></use></svg>
+        </a>
+      </div>
+
+    </div>
+  </div>
+</div>
+```
+
+### 4 columns — four categories
+
+`cs-grid-4` on the panel, four `.cs-mega-category` cells inside the grid. Good for a Resources / Learn-more panel:
+
+```html
+<div class="cs-drop-panel cs-grid-4" id="cs-panel-resources">
+  <div class="cs-drop-inner">
+    <div class="cs-mega-grid">
+      <div class="cs-mega-category">
+        <h3 class="cs-mega-category-title">Learn</h3>
+        <ul class="cs-drop-ul">…</ul>
+      </div>
+      <div class="cs-mega-category">
+        <h3 class="cs-mega-category-title">Media</h3>
+        <ul class="cs-drop-ul">…</ul>
+      </div>
+      <div class="cs-mega-category">
+        <h3 class="cs-mega-category-title">Tools</h3>
+        <ul class="cs-drop-ul">…</ul>
+      </div>
+      <div class="cs-mega-category">
+        <h3 class="cs-mega-category-title">Community</h3>
+        <ul class="cs-drop-ul">…</ul>
+      </div>
+    </div>
+  </div>
+</div>
+```
+
+### More columns (opt-in)
+
+Need 5 or 6 columns? The stylesheet includes an opt-in escape hatch via a CSS custom property — set `--cs-cols` inline on the `.cs-drop-panel`:
+
+```html
+<div class="cs-drop-panel" id="cs-panel-huge" style="--cs-cols: 5;">
+  <div class="cs-drop-inner">
+    <div class="cs-mega-grid"> … </div>
+  </div>
+</div>
+```
+
+### Mobile behavior
+
+On mobile (≤1023.5px), **all mega panels collapse to a single column** regardless of `cs-grid-*`, the `.cs-mega-grid` stacks vertically, and the `.cs-mega-promo` (if present) renders inline with the rest of the list.
 
 ---
 
@@ -308,7 +478,84 @@ Toggle `body.dark-mode` from your CS dark-mode button. The nav ships with full m
 
 ## Iconography library
 
-43 inline SVG icons live in the sprite at the bottom of `index.html`. Use via `<use href="#icon-name">` — fill inherits from `currentColor`, so they recolor with the surrounding text.
+43 inline SVG icons live in the sprite at the bottom of `index.html`. Use via `<use href="#icon-name">`:
+
+```html
+<svg class="cs-icon" aria-hidden="true"><use href="#icon-search"/></svg>
+```
+
+### Customizing icons
+
+All icons are **stroke-based line art** (Feather-style) rendered by the `.cs-icon` class:
+
+```css
+.cs-icon {
+    width: 1.15em;
+    height: 1.15em;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.5px;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+```
+
+That means you have three knobs:
+
+**1. Color — change the parent's `color`.**
+Icons inherit from `currentColor`, so they recolor with the surrounding text automatically. You never set `stroke` or `fill` on the icon itself.
+
+```css
+/* All icons inside the CTA button turn red */
+.my-nav .cs-button-solid { color: crimson; }
+
+/* One-off override for a specific icon */
+.cs-drop-link:hover .cs-icon { color: var(--primary); }
+```
+
+**2. Thickness — override `stroke-width`.**
+The default is `1.5px`. Bump it for a bolder look, drop it for a hairline feel. The value is a plain CSS length (no `px` required on SVG, but CSS requires it here):
+
+```css
+/* Chunkier icons site-wide */
+#cs-navigation .cs-icon { stroke-width: 2px; }
+
+/* Extra-bold just for the mobile drawer rows */
+@media (max-width: 1023.5px) {
+    #cs-navigation .cs-drop-link .cs-icon { stroke-width: 2.25px; }
+}
+```
+
+The chevron next to each dropdown label is a separate `.cs-drop-icon` class — tweak that one independently if you want a beefier caret without affecting the menu rows.
+
+**3. Size — override `width` / `height` (or scale the parent `font-size`).**
+Because `.cs-icon` sizes itself in `em`, the easiest scaling lever is the surrounding text size. For a specific one-off, set explicit dimensions:
+
+```html
+<!-- Inline override (used in the promo-button arrow) -->
+<svg class="cs-icon" aria-hidden="true" style="width:0.875em;height:0.875em;">
+  <use href="#icon-arrow-right"/>
+</svg>
+```
+
+```css
+/* Site-wide bump */
+#cs-navigation .cs-mega-promo .cs-icon { width: 1.25em; height: 1.25em; }
+```
+
+**Filled icons?** A few symbols (`bolt`, `star`, `home`, `house`, `leaf`, `flame`, `droplet`, `cross`) are drawn as polygons rather than lines. They currently render as outlines because `.cs-icon` sets `fill: none`. To fill them instead, flip `fill` to `currentColor` on those specific uses:
+
+```css
+.cs-icon.is-filled { fill: currentColor; stroke: none; }
+```
+
+```html
+<svg class="cs-icon is-filled" aria-hidden="true"><use href="#icon-star"/></svg>
+```
+
+**Adding your own icon.** Copy any 24×24 line-art SVG (Feather, Lucide, Tabler all work) into the `<defs>` sprite block as a `<symbol id="icon-yourname" viewBox="0 0 24 24">…</symbol>`, strip its own `fill`/`stroke`/`width`/`height` attributes so `.cs-icon` can control them, then reference it with `<use href="#icon-yourname"/>`.
+
+### Icon grid
 
 ### Interface & Layout
 
