@@ -1,0 +1,57 @@
+[
+    {
+        "key": "Home",
+        "url": "/"
+    },
+    {
+        "key": "Services",
+        "panelClass": "cs-grid-3",
+        "activePrefix": "/services/",
+        "categories": [
+            {
+                "title": "Professional",
+                "links": [
+                    { "key": "Website Design", "url": "/services/web/", "icon": "layout" },
+                    { "key": "SEO Audits", "url": "/services/seo/", "icon": "search" },
+                    { "key": "Marketing Strategy", "url": "/services/marketing/", "icon": "bar-chart" }
+                ]
+            },
+            {
+                "title": "Trades",
+                "links": [
+                    { "key": "Plumbing", "url": "/services/plumbing/", "icon": "wrench" },
+                    { "key": "Electrical", "url": "/services/electrical/", "icon": "bolt" },
+                    { "key": "Painting", "url": "/services/painting/", "icon": "paint-roller" }
+                ]
+            }
+        ],
+        "promo": {
+            "title": "Need a quote?",
+            "text": "Get an expert assessment for your project, entirely for free.",
+            "btnLabel": "Get Estimate",
+            "btnUrl": "/contact/",
+            "btnIcon": "arrow-right"
+        }
+    },
+    {
+        "key": "Company",
+        "children": [
+            { "key": "About Us", "url": "/about/", "icon": "building" },
+            { "key": "Our Team", "url": "/team/", "icon": "users" },
+            { "key": "Careers", "url": "/careers/", "icon": "briefcase" }
+        ]
+    },
+    {
+        "key": "Contact",
+        "align": "right",
+        "children": [
+            { "key": "Message Us", "url": "/contact/", "icon": "message" },
+            { "key": "Call Support", "url": "tel:+1234567890", "icon": "phone" },
+            { "key": "Find a Location", "url": "/locations/", "icon": "map-pin" }
+        ]
+    },
+    {
+        "key": "Blog",
+        "url": "/blog/"
+    }
+]

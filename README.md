@@ -1,124 +1,201 @@
-# Accessible Mega Menu
+# CodeStitch Mega Navigation
 
-A premium, framework-agnostic mega-menu navigation component designed for robust accessibility and zero dependencies. 
+A production-ready, CodeStitch-native navigation component with first-class mega-menu support. Drop-in compatible with any CodeStitch project — same class conventions (`cs-*`), same breakpoint (1023.5px / 1024px), same `body.dark-mode` + `body.cs-open` + `body.scroll` state model — while adding richer multi-column mega panels, grouped categories, featured promo blocks, and stronger keyboard / ARIA handling than the stock CodeStitch navs.
 
-Built with Vanilla JS (< 2KB), semantic HTML, and progressive CSS Grids, it natively handles advanced layouts like multi-column mega-menus, gracefully collapses for mobile devices without horizontal clipping, and implements a strict interactive disclosure pattern for screen readers.
+Built with vanilla JS (~2KB), semantic HTML, and CSS Grid. Zero dependencies.
 
-## 🚀 Features
+## Features
 
-- **Framework Agnostic:** Drop it perfectly into Astro, 11ty, Next.js, or plain HTML projects.
-- **Accessible By Default:** Bypasses restrictive `role="menubar"` traps in favor of standard, reliably traversable disclosure patterns. Tracks ARIA states dynamically. The keyboard tracking stack properly unwinds deep panel nestings natively via the `Escape` key.
-- **Progressive Enhancement:** Fully functions without JavaScript enabled via CSS-native `:focus-within` fallback behaviors.
-- **Mathematical Layout Bounds:** Uses smart `position: relative` header enclosures and specific `.mn-mega` modifiers to trap massive dropdown arrays, legally preventing them from exceeding viewport widths.
-- **Iconography System:** Zero reliance on heavy `.woff2` font loads. Boasts a lightweight, zero-byte inline stroke-SVG system inheriting text contexts via `currentColor`.
-- **Dynamic Grids:** Instant 2, 3, and 4-column cascading grid structures.
-- **Theming:** Clean CSS variable configuration (`--mn-`) easily overridden by host frameworks, natively supporting `prefers-color-scheme: dark`.
+- **CodeStitch-native:** Uses `#cs-navigation`, `.cs-toggle`, `.cs-ul-wrapper`, `.cs-ul`, `.cs-li`, `.cs-dropdown`, `.cs-drop-panel`, `.cs-li-link`, `body.cs-open`, `body.scroll`, `body.dark-mode`. Plugs straight into any CS Core Styles setup.
+- **Mega panels:** Add `.cs-mega` to any `.cs-li.cs-dropdown` for a full-width panel with 2, 3, or 4 columns (`.cs-grid-2/3/4`), grouped categories (`.cs-mega-category`), and an optional featured promo / CTA block (`.cs-mega-promo`).
+- **Click-only disclosure:** Dropdowns never open on hover or focus — only on an explicit click / Enter / Space on the parent `.cs-dropdown-button`. Matches the stock CodeStitch behavior exactly.
+- **Accessible-first:** Disclosure pattern (no `role="menubar"`), `aria-expanded` / `aria-controls`, `inert` management on closed panels, `Escape` stack-unwind (closes deepest open panel first, then the drawer), focus return, `:focus-visible` outlines.
+- **Single-button parent:** Parent dropdown items are a single `<button class="cs-li-link cs-dropdown-button">` containing the label and the chevron — identical to the stock CodeStitch pattern.
+- **Core Styles theming:** All colors flow from `--primary`, `--primaryLight`, `--headerColor`, `--bodyTextColor`, `--bodyTextColorWhite`. A small scoped layer (`--cs-nav-panel-shadow`, `--cs-nav-panel-radius`, `--cs-nav-ease`) is defined under `#cs-navigation` for panel-only tokens Core Styles doesn't provide.
+- **Dark mode:** Manual `body.dark-mode` class (CS convention). No `prefers-color-scheme` surprises.
+- **Edge-aware dropdowns:** Add `.cs-drop-right` to right-edge panels to anchor them to the right of the parent instead of the left.
+- **Icon sprite:** Inline SVG `<symbol>` sprite with 40+ icons, used via `<use href="#icon-…">` and inheriting `currentColor`.
 
 ---
 
-## 📦 Installation & Usage
+## Files
 
-Copy over the relevant stylesheet variant (`.css`, `.scss`, or `.less`) alongside `mega-menu.js` into your core directory.
+| File | Purpose |
+| ---- | ------- |
+| `mega-menu.css` | Ship-ready stylesheet (flat CSS). |
+| `mega-menu.scss` | SCSS source, nested under `#cs-navigation`. |
+| `mega-menu.less` | LESS source, identical rules to the SCSS version. |
+| `mega-menu.js` | ~2KB IIFE, no dependencies. |
+| `index.html` | Full demo with top bar, standard dropdown, 3-column mega panel, edge-aligned dropdown, CTA, and SVG sprite. |
 
-### 1. The Global Structure
-Your navigation wrapper must sit inside a `position: relative` bounding container to mathematically enclose massive dropdown widths without slicing horizontally.
+Ship whichever stylesheet variant matches your toolchain. They compile to the same output.
+
+---
+
+## Quick start (plain HTML)
 
 ```html
 <!DOCTYPE html>
-<!-- The JS automatically removes the 'no-js' utility class on load -->
-<html lang="en" class="no-js"> 
+<html lang="en" class="no-js">
+<head>
+  <link rel="stylesheet" href="/mega-menu.css">
+  <!-- Core Styles variables should already be defined on :root -->
+</head>
 <body>
-  <header style="border-bottom: 1px solid var(--mn-border);">
-    <!-- The relative container manages layout constraints for panels -->
-    <div style="max-width: 1200px; margin: 0 auto; position: relative;">
-      <a href="/">Brand Logo.</a>
-      <!-- Insert Nav Component Here -->
-      <nav aria-label="Main Navigation" class="mega-nav" id="main-nav">...</nav>
-    </div>
-  </header>
-  
-  <!-- Paste the SVG Dictionary Sprite at the bottom of your layouts -->
-  <svg style="display: none;" xmlns="http://www.w3.org/2000/svg">...</svg>
-  
-  <script src="mega-menu.js"></script>
+  <!-- Paste the #cs-navigation block from index.html here -->
+  <header id="cs-navigation"> ... </header>
+
+  <!-- Paste the SVG sprite at the bottom of <body> -->
+  <svg style="display:none" xmlns="http://www.w3.org/2000/svg"> ... </svg>
+
+  <script src="/mega-menu.js" defer></script>
 </body>
 </html>
 ```
 
-### 2. Building Grids
-Standard sub-menus operate via progressive CSS configurations triggering via `__panel` utility classes. Everything wraps flexibly.
+The JS removes `no-js` from `<html>` on load; the CSS `:focus-within` fallback still works for JS-off visitors.
 
-* **2 Columns:** `class="mega-nav__panel mn-grid-2"`
-* **3 Columns:** `class="mega-nav__panel mn-grid-3"`
-* **4 Columns:** `class="mega-nav__panel mn-grid-4"`
+## Astro
 
-Inside, configure categorized arrays utilizing the native `mega-nav__category` groupings:
+Drop `index.html`'s `<header id="cs-navigation">` block into a `src/components/Navigation.astro` component. Import the CSS in your layout and place the JS with `is:inline` or load it from `/public`:
+
+```astro
+---
+// src/components/Navigation.astro
+---
+<header id="cs-navigation"> ... </header>
+
+<style is:global>@import '/mega-menu.css';</style>
+<script src="/mega-menu.js" is:inline defer></script>
+```
+
+## 11ty
+
+Save the `<header>` block as `_includes/nav.njk` and include it in your base layout. Copy `mega-menu.css` / `mega-menu.js` into your passthrough-copied assets directory.
+
+```njk
+{% include "nav.njk" %}
+```
+
+---
+
+## Required vs optional
+
+**Required:**
+- `mega-menu.css` + `mega-menu.js`
+- Core Styles `--primary` and `--headerColor` defined on `:root`
+- The `#cs-navigation` block markup
+
+**Optional:**
+- `.cs-top-bar` (contact + social strip above the main nav)
+- `.cs-mega` panels (add to any `.cs-li.cs-dropdown`)
+- `.cs-mega-promo` featured CTA block inside a mega panel
+- `#dark-mode-toggle` button (commented in `index.html`)
+- `.cs-button-solid` CTA inside the nav
+
+---
+
+## Class map (from the original fork)
+
+The component used to use BEM `mega-nav__*` classes; it's been fully renamed to the flat CodeStitch convention.
+
+| Old | New |
+| --- | --- |
+| `mega-nav__list` | `cs-ul` |
+| `mega-nav__item` | `cs-li` (+ `cs-dropdown`, + `cs-mega`) |
+| `mega-nav__item-header` | *(removed — single button parent)* |
+| `mega-nav__link` | `cs-li-link` |
+| `mega-nav__toggle` | `cs-dropdown-button` (the whole parent) |
+| `mega-nav__panel` | `cs-drop-panel` |
+| `mega-nav__panel-inner` | `cs-drop-inner` |
+| `mega-nav__panel-grid` | `cs-mega-grid` |
+| `mega-nav__panel-list` | `cs-drop-ul` |
+| `mega-nav__panel-link` | `cs-drop-link` (+ `cs-li-link`) |
+| `mega-nav__category` | `cs-mega-category` |
+| `mega-nav__category-title` | `cs-mega-category-title` |
+| `mega-nav__promo*` | `cs-mega-promo*` |
+| `mn-grid-2/3/4` | `cs-grid-2/3/4` |
+| `mn-align-right` | `cs-drop-right` |
+| `.is-open` | `body.cs-open` + `.cs-active` |
+| `--mn-*` | Core Styles vars + scoped `--cs-nav-*` |
+
+---
+
+## Building grids
+
+Mega panels opt into a column count via `.cs-grid-2`, `.cs-grid-3`, or `.cs-grid-4` on `.cs-mega-grid`:
 
 ```html
-<div class="mega-nav__panel mn-grid-3" id="panel-services">
-  <div class="mega-nav__panel-inner">
-    <div class="mega-nav__panel-grid">
-      
-      <div class="mega-nav__category">
-        <h3 class="mega-nav__category-title">Services</h3>
-        <ul class="mega-nav__panel-list">
-          <li><a href="#" class="mega-nav__panel-link">Plumbing</a></li>
-          <li><a href="#" class="mega-nav__panel-link">Electrical</a></li>
-        </ul>
-      </div>
+<li class="cs-li cs-dropdown cs-mega">
+  <button class="cs-li-link cs-dropdown-button"
+          type="button"
+          aria-haspopup="true"
+          aria-expanded="false"
+          aria-controls="panel-services">
+    Services
+    <svg class="cs-drop-icon" aria-hidden="true"><use href="#icon-arrow-down"></use></svg>
+  </button>
 
+  <div class="cs-drop-panel" id="panel-services">
+    <div class="cs-drop-inner">
+      <div class="cs-mega-grid cs-grid-3">
+
+        <div class="cs-mega-category">
+          <h3 class="cs-mega-category-title">Residential</h3>
+          <ul class="cs-drop-ul">
+            <li class="cs-drop-li"><a href="#" class="cs-li-link cs-drop-link">Plumbing</a></li>
+            <li class="cs-drop-li"><a href="#" class="cs-li-link cs-drop-link">Electrical</a></li>
+          </ul>
+        </div>
+
+        <div class="cs-mega-promo">
+          <h4 class="cs-mega-promo-title">Need a quote?</h4>
+          <p class="cs-mega-promo-text">Free on-site assessment.</p>
+          <a href="/contact" class="cs-mega-promo-btn">
+            Estimate
+            <svg class="cs-icon" aria-hidden="true"><use href="#icon-arrow-right"></use></svg>
+          </a>
+        </div>
+
+      </div>
     </div>
   </div>
-</div>
+</li>
 ```
 
-### 3. Mega Spreads vs. Dropdown Anchors
-Determine how dropdown elements align to buttons:
-
-* **Massive Header-Spanning Layouts:** Tag your root `<li>` wrapper with `.mn-mega`. This severs the dropdown's attachment from the button itself and stretches it directly across the parent relative container boundaries uniformly.
-* **Local Right-Aligned Popovers:** If building standard small lists nested cleanly towards the right screen edge, append `.mn-align-right` against your panel block. This isolates its spawn point natively underneath the button while expanding inversely towards the left text, blocking clipping completely.
-
-### 4. Promotion / CTA Blocks
-Create highly styled conversion funnels alongside links dynamically.
-
-```html
-<div class="mega-nav__promo">
-  <h4 class="mega-nav__promo-title">Need a quote?</h4>
-  <p class="mega-nav__promo-text">Get an expert assessment natively.</p>
-  <a href="/contact" class="mega-nav__promo-btn">
-    Estimate
-    <svg class="mega-icon" aria-hidden="true"><use href="#icon-arrow-right"></use></svg>
-  </a>
-</div>
-```
+A standard (non-mega) dropdown is the same shape minus `.cs-mega` and `.cs-mega-grid`: put `.cs-drop-ul` directly inside `.cs-drop-inner`. Add `.cs-drop-right` to `.cs-drop-panel` for right-edge items so the panel anchors to the right of the parent.
 
 ---
 
-## 🎨 Modifying Themes
+## Theming
 
-This widget binds internal styling safely via namespaced CSS properties. Override the following tokens in your `root` or native framework integration:
-- `--mn-bg`
-- `--mn-text`
-- `--mn-panel-bg`
-- `--mn-transition`
-- `--mn-icon-stroke`
-- `--mn-border-radius`
+All colors come from Core Styles. Set these on `:root` (any CS theme already does):
+
+- `--primary`, `--primaryLight`, `--secondary`
+- `--headerColor`, `--bodyTextColor`, `--bodyTextColorWhite`
+- `--dark`, `--medium` (dark-mode)
+
+Panel-only local tokens are scoped under `#cs-navigation` and can be overridden there:
+
+```css
+#cs-navigation {
+  --cs-nav-panel-shadow: 0 10px 30px rgba(0,0,0,.15);
+  --cs-nav-panel-radius: 8px;
+  --cs-nav-ease: 250ms cubic-bezier(.4,0,.2,1);
+}
+```
+
+## Dark mode
+
+Toggle `body.dark-mode` from your CS dark-mode button. The nav ships with full mobile + desktop dark variants. Uncomment the `#dark-mode-toggle` block in `index.html` to enable the button, and pair it with the standard CS dark-mode script.
 
 ---
 
-## 🗃️ Iconography Library
-The included hidden SVG sprite contains over 40 heavily optimized icons tailored for small business, agency, and layout layouts. Use them by passing their ID into a `<use>` tag:
+## Iconography library
 
-`<use href="#icon-[name]"></use>`
+40+ inline SVG icons live in the sprite at the bottom of `index.html`. Use via `<use href="#icon-name">` — fill inherits from `currentColor`, so they recolor with the surrounding text.
 
-### Interface & Layout
-`menu`, `close`, `arrow-down`, `arrow-right`, `external-link`, `check`, `search`, `layout`, `gear`, `download`, `upload`, `shield`
-
-### Contact & Support
-`envelope`, `phone`, `message`, `map-pin`, `help`, `lifebuoy`, `user`, `users`
-
-### Media & Data
-`image`, `camera`, `file-text`, `bar-chart`, `clipboard`, `tag`, `star`, `calendar`, `clock`
-
-### Industries & Tools
-`briefcase` (Corporate), `building` (Real Estate), `wrench`, `paint-roller`, `bolt` (Trades), `droplet`, `snowflake`, `flame` (HVAC), `house`, `leaf` (Landscaping), `cross` (Health), `scissors` (Salons), `coffee` (Cafes)
+**Interface & Layout:** `menu`, `close`, `arrow-down`, `arrow-right`, `external-link`, `check`, `search`, `layout`, `gear`, `download`, `upload`, `shield`
+**Contact & Support:** `envelope`, `phone`, `message`, `map-pin`, `help`, `lifebuoy`, `user`, `users`
+**Media & Data:** `image`, `camera`, `file-text`, `bar-chart`, `clipboard`, `tag`, `star`, `calendar`, `clock`
+**Industries & Tools:** `briefcase`, `building`, `wrench`, `paint-roller`, `bolt`, `droplet`, `snowflake`, `flame`, `house`, `leaf`, `cross`, `scissors`, `coffee`

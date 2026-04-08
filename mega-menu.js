@@ -1,169 +1,156 @@
 /**
- * Mega-Menu Disclosure Controller
- * Pragmatic, Accessible, and Lean (< 2KB)
- * No framework dependencies.
+ * CodeStitch Navigation Controller (mega-menu capable)
+ * -----------------------------------------------------
+ * Drops into any CodeStitch project that uses #cs-navigation.
+ * Adds support for real mega-menu panels (.cs-dropdown / .cs-mega) on top of
+ * the stock CS pattern, while preserving CS conventions.
  */
 (function () {
-  const SELECTORS = {
-    nav: '.mega-nav',
-    mobileToggle: '.mega-nav__mobile-toggle',
-    mobileClose: '.mega-nav__mobile-close',
-    desktopToggle: '.mega-nav__toggle',
-    panel: '.mega-nav__panel'
-  };
+    "use strict";
 
-  const cssOpenClass = 'is-open';
-  let bodyScrollY = 0;
+    var BP_MOBILE_MAX = 1023.5;
+    var SEL = {
+        nav: "#cs-navigation",
+        toggle: "#cs-navigation .cs-toggle",
+        wrapper: "#cs-ul-wrapper",
+        dropdown: ".cs-dropdown",
+        dropButton: ".cs-dropdown-button",
+        dropPanel: ".cs-drop-panel"
+    };
+    var CLS = { active: "cs-active", open: "cs-open", scroll: "scroll" };
 
-  /**
-   * iOS specific scroll lock
-   */
-  function lockBodyScroll() {
-    bodyScrollY = window.scrollY;
-    document.body.style.position = 'fixed';
-    document.body.style.top = `-${bodyScrollY}px`;
-    document.body.style.width = '100%';
-  }
+    var body = document.body;
+    var nav = document.querySelector(SEL.nav);
+    if (!nav) return;
+    var toggleBtn = nav.querySelector(SEL.toggle);
+    var wrapper = nav.querySelector(SEL.wrapper) || document.getElementById("cs-ul-wrapper");
 
-  function unlockBodyScroll() {
-    document.body.style.position = '';
-    document.body.style.top = '';
-    document.body.style.width = '';
-    window.scrollTo(0, bodyScrollY);
-  }
+    document.documentElement.classList.remove("no-js");
+    document.documentElement.classList.add("js-enabled");
 
-  /**
-   * Checks if we are currently in desktop view (could use matchMedia, but offsetParent works fine too)
-   */
-  function isMobileView() {
-    const mobileToggle = document.querySelector(SELECTORS.mobileToggle);
-    return mobileToggle && window.getComputedStyle(mobileToggle).display !== 'none';
-  }
+    var isMobile = function () {
+        return window.matchMedia("(max-width: " + BP_MOBILE_MAX + "px)").matches;
+    };
 
-  /**
-   * Manage state of a disclosure button
-   */
-  function togglePanel(button, forceState = null) {
-    const isExpanded = button.getAttribute('aria-expanded') === 'true';
-    const newState = forceState !== null ? forceState : !isExpanded;
-    
-    button.setAttribute('aria-expanded', newState);
-    
-    // Add CSS class for transition sync, since pure attribute selectors can be tricky to animate
-    const panelId = button.getAttribute('aria-controls');
-    const panel = document.getElementById(panelId);
-    if (panel) {
-      if (newState) {
-        panel.classList.add(cssOpenClass);
-      } else {
-        panel.classList.remove(cssOpenClass);
-      }
+    // -- Drawer (hamburger) -------------------------------------------------
+    function setDrawer(open) {
+        if (!toggleBtn || !nav) return;
+        nav.classList.toggle(CLS.active, open);
+        toggleBtn.classList.toggle(CLS.active, open);
+        body.classList.toggle(CLS.open, open);
+        toggleBtn.setAttribute("aria-expanded", open ? "true" : "false");
+        if (wrapper && isMobile()) wrapper.inert = !open;
+        if (!open) closeAllDropdowns();
     }
-    
-    return newState;
-  }
+    if (toggleBtn) {
+        toggleBtn.addEventListener("click", function () {
+            setDrawer(!nav.classList.contains(CLS.active));
+        });
+    }
 
-  /**
-   * Close all active dropdowns.
-   */
-  function closeAllDropdowns(withinNav = document) {
-    const openToggles = withinNav.querySelectorAll(`${SELECTORS.desktopToggle}[aria-expanded="true"]`);
-    openToggles.forEach(btn => togglePanel(btn, false));
-  }
+    // -- Dropdown / mega panel disclosure -----------------------------------
+    function setDropdown(dropdown, open) {
+        if (!dropdown) return;
+        dropdown.classList.toggle(CLS.active, open);
+        var btn = dropdown.querySelector(SEL.dropButton);
+        var panel = dropdown.querySelector(SEL.dropPanel);
+        if (btn) btn.setAttribute("aria-expanded", open ? "true" : "false");
+        if (panel) panel.inert = !open;
+    }
 
-  /**
-   * Setup Event Listeners
-   */
-  function init() {
-    const mobileToggle = document.querySelector(SELECTORS.mobileToggle);
-    const mobileClose = document.querySelector(SELECTORS.mobileClose);
-    const mainNav = document.getElementById(mobileToggle?.getAttribute('aria-controls'));
+    function closeAllDropdowns(root) {
+        (root || nav).querySelectorAll(SEL.dropdown + "." + CLS.active).forEach(function (d) {
+            setDropdown(d, false);
+        });
+    }
 
-    // Remove no-js class to enable JS interactions, disable CSS fallbacks
-    document.documentElement.classList.remove('no-js');
-    document.documentElement.classList.add('js-enabled');
+    // Click delegation on the whole document so outside-clicks also route here
+    document.addEventListener("click", function (e) {
+        var btn = e.target.closest && e.target.closest(SEL.dropButton);
+        if (btn && nav.contains(btn)) {
+            e.preventDefault();
+            var dropdown = btn.closest(SEL.dropdown);
+            if (!dropdown) return;
+            var willOpen = !dropdown.classList.contains(CLS.active);
 
-    // 1. Mobile Menu Toggle
-    if (mobileToggle && mainNav) {
-      mobileToggle.addEventListener('click', () => {
-        const isOpen = togglePanel(mobileToggle);
-        if (isOpen) {
-          mainNav.classList.add(cssOpenClass);
-          lockBodyScroll();
+            // Desktop accordion: close sibling dropdowns that don't contain this one
+            if (!isMobile() && willOpen) {
+                nav.querySelectorAll(SEL.dropdown + "." + CLS.active).forEach(function (d) {
+                    if (d !== dropdown && !d.contains(dropdown)) setDropdown(d, false);
+                });
+            }
+            setDropdown(dropdown, willOpen);
+            return;
+        }
+
+        // Click outside the nav (desktop) → close all dropdowns
+        if (!isMobile() && !(e.target.closest && e.target.closest(SEL.nav))) {
+            closeAllDropdowns();
+        }
+    });
+
+    // Keyboard — Space / Enter on the chevron is handled by native button click
+    // Escape unwinds the stack: deepest open dropdown first, then drawer
+    document.addEventListener("keydown", function (e) {
+        if (e.key !== "Escape") return;
+        var open = Array.from(nav.querySelectorAll(SEL.dropdown + "." + CLS.active));
+        if (open.length) {
+            var last = open[open.length - 1];
+            setDropdown(last, false);
+            var lastBtn = last.querySelector(SEL.dropButton);
+            if (lastBtn) lastBtn.focus();
+            return;
+        }
+        if (isMobile() && nav.classList.contains(CLS.active)) {
+            setDrawer(false);
+            if (toggleBtn) toggleBtn.focus();
+        }
+    });
+
+    // focusout → close a dropdown when focus leaves it entirely
+    nav.addEventListener("focusout", function (e) {
+        var dropdown = e.target.closest && e.target.closest(SEL.dropdown);
+        if (!dropdown || !dropdown.classList.contains(CLS.active)) return;
+        setTimeout(function () {
+            if (!dropdown.contains(document.activeElement)) setDropdown(dropdown, false);
+        }, 0);
+    });
+
+    // Scroll — add body.scroll at 100px to translate the top-bar out
+    var ticking = false;
+    document.addEventListener("scroll", function () {
+        if (ticking) return;
+        ticking = true;
+        requestAnimationFrame(function () {
+            body.classList.toggle(CLS.scroll, document.documentElement.scrollTop >= 100);
+            ticking = false;
+        });
+    }, { passive: true });
+
+    // Resize — reset inert state when crossing the breakpoint
+    var lastMobile = isMobile();
+    window.addEventListener("resize", function () {
+        var nowMobile = isMobile();
+        if (nowMobile === lastMobile) return;
+        lastMobile = nowMobile;
+        // On desktop the drawer is irrelevant; make sure everything is inert-clean
+        if (!nowMobile) {
+            if (wrapper) wrapper.inert = false;
+            if (nav.classList.contains(CLS.active)) setDrawer(false);
         } else {
-          mainNav.classList.remove(cssOpenClass);
-          unlockBodyScroll();
+            // On mobile, drawer starts closed
+            if (wrapper) wrapper.inert = !nav.classList.contains(CLS.active);
         }
-      });
-    }
-
-    // 2. Mobile Menu Explicit Close
-    if (mobileClose && mainNav) {
-      mobileClose.addEventListener('click', () => {
-        togglePanel(mobileToggle, false);
-        mainNav.classList.remove(cssOpenClass);
-        unlockBodyScroll();
-        mobileToggle.focus(); // Return focus for accessibility
-      });
-    }
-
-    // 2. Desktop/Submenu Accordion Toggles (Event Delegation)
-    document.addEventListener('click', (event) => {
-      const toggleBtn = event.target.closest(SELECTORS.desktopToggle);
-      
-      if (toggleBtn) {
-        // Enforce Accordion behavior defensively: if desktop, close siblings
-        if (!isMobileView()) {
-          const navRoot = toggleBtn.closest(SELECTORS.nav);
-          // find all open toggles that are NOT this button or an ancestor of it
-          const openToggles = navRoot.querySelectorAll(`${SELECTORS.desktopToggle}[aria-expanded="true"]`);
-          openToggles.forEach(openBtn => {
-             if (openBtn !== toggleBtn && !openBtn.contains(toggleBtn)) {
-                 togglePanel(openBtn, false);
-             }
-          });
-        }
-        togglePanel(toggleBtn);
-        return;
-      }
-
-      // 3. Click Outside to Close (Desktop primarily)
-      if (!isMobileView()) {
-        const isInsideNav = event.target.closest(SELECTORS.nav);
-        if (!isInsideNav) {
-          closeAllDropdowns();
-        }
-      }
+        // Closed dropdown panels are inert on both viewports
+        nav.querySelectorAll(SEL.dropdown).forEach(function (d) {
+            var panel = d.querySelector(SEL.dropPanel);
+            if (panel) panel.inert = !d.classList.contains(CLS.active);
+        });
     });
 
-    // 4. Escape Key Unwinding Stack
-    document.addEventListener('keydown', (event) => {
-      if (event.key === 'Escape') {
-        // Stack 1: Close innermost open accordion/dropdown first
-        const openToggles = Array.from(document.querySelectorAll(`${SELECTORS.desktopToggle}[aria-expanded="true"]`));
-        if (openToggles.length > 0) {
-          // Close the deepest one (pop the stack effectively)
-          const lastOpen = openToggles[openToggles.length - 1];
-          togglePanel(lastOpen, false);
-          lastOpen.focus(); // Return focus to the toggle
-          return; // Stop here, don't close the main drawer yet
-        }
-
-        // Stack 2: Close main mobile drawer
-        if (isMobileView() && mobileToggle && mobileToggle.getAttribute('aria-expanded') === 'true') {
-          togglePanel(mobileToggle, false);
-          mainNav.classList.remove(cssOpenClass);
-          unlockBodyScroll();
-          mobileToggle.focus();
-        }
-      }
+    // Initial inert state — hide closed panels / drawer from AT on boot
+    if (wrapper && isMobile()) wrapper.inert = true;
+    nav.querySelectorAll(SEL.dropPanel).forEach(function (p) {
+        p.inert = true;
     });
-  }
-
-  // Auto-init
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', init);
-  } else {
-    init();
-  }
 })();
